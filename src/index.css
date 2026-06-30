@@ -1098,6 +1098,7 @@ body {
 }
 
 /* Faro */
+
 .faro-neon-line {
   position: absolute;
   left: 50%;
@@ -1142,6 +1143,12 @@ body {
   background: #2e3a3e;
   border-radius: 0 0 50% 50%;
   box-shadow: 0 0 20px rgba(71, 124, 134, 0.35);
+}
+
+.faro-fish {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
 }
 
 .fish {
@@ -1291,9 +1298,24 @@ body {
 }
 
 /* Obelisco */
+.obelisco-bg-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.obelisco-bg-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.4;
+}
+
 .obelisco-city {
   position: absolute;
   inset: 10%;
+  z-index: 1;
 }
 
 .obelisco-monument {
@@ -1333,6 +1355,7 @@ body {
 
 .obelisco-mic {
   position: absolute;
+  z-index: 2;
   right: 10%;
   top: 30%;
   font-size: 2rem;
@@ -1341,13 +1364,59 @@ body {
 
 .obelisco-loop-scenes {
   position: absolute;
-  bottom: 5%;
-  display: flex;
-  gap: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.obelisco-scene-video {
+  position: absolute;
+  bottom: 15%;
+  width: 250px;
+  height: 210px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  pointer-events: auto;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.obelisco-scene-video:nth-child(1) {
+  left: calc(30% - 150px);
+}
+
+.obelisco-scene-video:nth-child(2) {
+  left: calc(70% + 20px);
+}
+
+.obelisco-scene-video:active {
+  cursor: grabbing;
+}
+
+.obelisco-scene-video--expanded {
+  width: 280px;
+  height: 180px;
+  z-index: 5;
+}
+
+.obelisco-scene-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.obelisco-scene-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted, #eee);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  pointer-events: none;
 }
 
 /* Observatorio */

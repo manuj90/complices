@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useAnimationFrame } from 'framer-motion';
+import { useRef, useState } from 'react';
 import type { PinId } from '../../data/types';
 
 interface ExperienceVisualsProps {
@@ -29,21 +30,36 @@ export function ExperienceVisuals({ experienceId, phase, isLoop }: ExperienceVis
 function FaroVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
   return (
     <div className="visuals visuals--faro">
+
+      <div className="loop-video">
+        <video autoPlay muted loop playsInline>
+          <source src="/media/video/faro/Mar.mp4" type="video/mp4" />
+        </video>
+
+        <div className="" />
+      </div>
+
       <motion.div
         className="faro-neon-line"
         initial={{ scaleY: 0 }}
         animate={{ scaleY: phase >= 0 ? 1 : 0 }}
         transition={{ duration: 1.5 }}
       />
+
       <motion.div
         className="faro-waves"
         animate={{ y: [0, -20, 0] }}
         transition={{ repeat: Infinity, duration: 3 }}
       >
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="faro-wave" style={{ animationDelay: `${i * 0.5}s` }} />
+          <div
+            key={i}
+            className="faro-wave"
+            style={{ animationDelay: `${i * 0.5}s` }}
+          />
         ))}
       </motion.div>
+
       {phase >= 2 && (
         <motion.div
           className="faro-boat"
@@ -52,23 +68,113 @@ function FaroVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
           transition={{ duration: 2 }}
         />
       )}
-      {isLoop && (
-        <div className="faro-fish">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="fish"
-              animate={{
-                x: [0, 100 + i * 30],
-                y: [0, Math.sin(i) * 20],
-              }}
-              transition={{ repeat: Infinity, duration: 4 + i * 0.5, ease: 'linear' }}
-              style={{ top: `${20 + i * 8}%`, left: `${i * 10}%` }}
-            />
-          ))}
-        </div>
-      )}
+
+      {isLoop && <FaroFish />}
+
     </div>
+  );
+}
+
+const FISH_COUNT = 8;
+const FLEE_RADIUS = 140; // px, distancia a la que el pez empieza a huir
+const FLEE_STRENGTH = 60; // px, desplazamiento máximo de huida
+
+function FaroFish() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouse = useRef({ x: -9999, y: -9999 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouse.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  };
+
+  const handleMouseLeave = () => {
+    mouse.current = { x: -9999, y: -9999 };
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="faro-fish"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ pointerEvents: 'auto' }}
+    >
+      {[...Array(FISH_COUNT)].map((_, i) => (
+        <Fish key={i} index={i} containerRef={containerRef} mouse={mouse} />
+      ))}
+    </div>
+  );
+}
+
+function Fish({
+  index,
+  containerRef,
+  mouse,
+}: {
+  index: number;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  mouse: React.RefObject<{ x: number; y: number }>;
+}) {
+  const baseTop = 20 + index * 8; // %
+  const baseLeft = index * 10; // %
+  const duration = 4 + index * 0.5;
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const fleeX = useMotionValue(0);
+  const fleeY = useMotionValue(0);
+
+  useAnimationFrame((t) => {
+    // Movimiento base: nado de ida y vuelta en loop continuo
+    const progress = (t / 1000 / duration) % 1;
+    const swimDistance = 100 + index * 30;
+    const baseX = Math.sin(progress * Math.PI * 2) * (swimDistance / 2) + swimDistance / 2;
+    const baseY = Math.sin(progress * Math.PI * 4 + index) * 20;
+
+    // Calcula posición absoluta del pez para comparar con el mouse
+    const container = containerRef.current;
+    if (container) {
+      const rect = container.getBoundingClientRect();
+      const fishX = (baseLeft / 100) * rect.width + baseX + fleeX.get();
+      const fishY = (baseTop / 100) * rect.height + baseY + fleeY.get();
+
+      const dx = fishX - mouse.current.x;
+      const dy = fishY - mouse.current.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < FLEE_RADIUS && dist > 0) {
+        const force = (1 - dist / FLEE_RADIUS) * FLEE_STRENGTH;
+        const targetFleeX = (dx / dist) * force;
+        const targetFleeY = (dy / dist) * force;
+        // suaviza la huida (spring manual simple)
+        fleeX.set(fleeX.get() + (targetFleeX - fleeX.get()) * 0.15);
+        fleeY.set(fleeY.get() + (targetFleeY - fleeY.get()) * 0.15);
+      } else {
+        // vuelve gradualmente a su trayectoria normal
+        fleeX.set(fleeX.get() + (0 - fleeX.get()) * 0.05);
+        fleeY.set(fleeY.get() + (0 - fleeY.get()) * 0.05);
+      }
+    }
+
+    x.set(baseX + fleeX.get());
+    y.set(baseY + fleeY.get());
+  });
+
+  return (
+    <motion.div
+      className="fish"
+      style={{
+        top: `${baseTop}%`,
+        left: `${baseLeft}%`,
+        x,
+        y,
+      }}
+    />
   );
 }
 
@@ -135,57 +241,57 @@ interface ParejaScene {
 const PAREJA_SCENES: ParejaScene [] = [
   {
     label: "Mujer Airport",
-    video: "public/media/video/pareja/MujerAirport.mp4",
+    video: "/media/video/pareja/MujerAirport.mp4",
     wall: 1,
   },
   {
     label: "Hombre Restaurant",
-    video: "public/media/video/pareja/ComoSolo.mp4",
+    video: "/media/video/pareja/ComoSolo.mp4",
     wall: 2,
   },
   {
     label: "Aeropuerto",
-    video: "public/media/video/pareja/CorroAirport.mp4",
+    video: "/media/video/pareja/CorroAirport.mp4",
     wall: 3,
   },
   {
     label: "Perro",
-    video: "public/media/video/pareja/PerroSolo.mp4",
+    video: "/media/video/pareja/PerroSolo.mp4",
     wall: 2,
   },
   {
     label: "Padre Hijo",
-    video: "public/media/video/pareja/abrazoAirport.mp4",
+    video: "/media/video/pareja/abrazoAirport.mp4",
     wall: 2,
   },
   {
     label: "Bicicletas",
-    video: "public/media/video/pareja/Bikes.mp4",
+    video: "/media/video/pareja/Bikes.mp4",
     wall: 1,
   },
   {
     label: "Palomas",
-    video: "public/media/video/pareja/Tie.mp4",
+    video: "/media/video/pareja/Tie.mp4",
     wall: 3,
   },
   {
     label: "Ajedrez",
-    video: "public/media/video/pareja/Chess.mp4",
+    video: "/media/video/pareja/Chess.mp4",
     wall: 1,
   },
   {
     label: "Bailando",
-    video: "public/media/video/pareja/Bailando.mp4",
+    video: "/media/video/pareja/Bailando.mp4",
     wall: 1,
   },
   {
     label: "Auriculares",
-    video: "public/media/video/pareja/Walks.mp4",
+    video: "/media/video/pareja/Walks.mp4",
     wall: 3,
   },
   {
     label: "Bar",
-    video: "public/media/video/pareja/Earphones.mp4",
+    video: "/media/video/pareja/Earphones.mp4",
     wall: 1,
   },
 ];
@@ -245,7 +351,7 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
             />
           ))}
         </svg>
-      )}
+      )}n
       {isLoop && (
         <div className="pareja-buildings-loop">
           {[...Array(3)].map((_, i) => (
@@ -274,9 +380,16 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
 
 function ObeliscoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
   const activity = isLoop ? 1 : Math.min(phase / 3, 1);
+  const sceneAreaRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="visuals visuals--obelisco">
+      <div className="obelisco-bg-video">
+        <video autoPlay muted loop playsInline>
+          <source src="/media/video/obelisco/Ciudad.mp4" type="video/mp4" />
+        </video>
+      </div>
+
       <div className="obelisco-city">
         <div className="obelisco-monument" />
         <div className="obelisco-streets">
@@ -313,12 +426,56 @@ function ObeliscoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) 
         </motion.div>
       )}
       {isLoop && (
-        <div className="obelisco-loop-scenes">
-          <div className="obelisco-stadium">⚽ Estadio lleno</div>
-          <div className="obelisco-bar">🍻 Bar activo</div>
+        <div className="obelisco-loop-scenes" ref={sceneAreaRef}>
+          <ObeliscoSceneVideo
+            src="/media/video/obelisco/Estadio.mp4"
+            label="Estadio lleno"
+            delay={0.5}
+            dragConstraintsRef={sceneAreaRef}
+          />
+          <ObeliscoSceneVideo
+            src="/media/video/obelisco/Bar.mp4"
+            label="Bar activo"
+            delay={1.2}
+            dragConstraintsRef={sceneAreaRef}
+          />
         </div>
       )}
     </div>
+  );
+}
+
+function ObeliscoSceneVideo({
+  src,
+  label,
+  delay,
+  dragConstraintsRef,
+}: {
+  src: string;
+  label: string;
+  delay: number;
+  dragConstraintsRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <motion.div
+      className={`obelisco-scene-video${expanded ? ' obelisco-scene-video--expanded' : ''}`}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1, delay }}
+      drag
+      dragConstraints={dragConstraintsRef}
+      dragMomentum={false}
+      dragElastic={0.1}
+      whileDrag={{ cursor: 'grabbing', zIndex: 10 }}
+      onTap={() => setExpanded((v) => !v)}
+    >
+      <video autoPlay muted loop playsInline>
+        <source src={src} type="video/mp4" />
+      </video>
+      <span className="obelisco-scene-label">{label}</span>
+    </motion.div>
   );
 }
 
