@@ -6,14 +6,15 @@ interface AutoplayVideoProps extends React.VideoHTMLAttributes<HTMLVideoElement>
   sources?: { src: string; type?: string }[];
   /** Reintenta play cuando cambia (p. ej. al abrir cortinas) */
   active?: boolean;
-  preloadStrategy?: 'auto' | 'metadata';
+  preloadStrategy?: 'auto' | 'metadata' | 'none';
 }
 
 export function AutoplayVideo({
   src,
   sources,
   active = true,
-  preloadStrategy = 'auto',
+  // ponytail: default metadata — auto only for the one video the user is watching now
+  preloadStrategy = 'metadata',
   className,
   ...props
 }: AutoplayVideoProps) {
@@ -22,7 +23,12 @@ export function AutoplayVideo({
 
   useEffect(() => {
     const video = ref.current;
-    if (!video || !active) return;
+    if (!video) return;
+
+    if (!active) {
+      video.pause();
+      return;
+    }
 
     const tryPlay = () => {
       if (video.paused) {

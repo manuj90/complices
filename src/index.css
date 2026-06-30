@@ -567,11 +567,17 @@ body {
   border-radius: 16px;
 }
 
+/* ponytail: lock body scroll when experience overlay is open */
+body:has(.experience-player) {
+  overflow: hidden;
+}
+
 /* ─── Experience Player ─── */
 .experience-player {
   position: fixed;
   inset: 0;
   z-index: 300;
+  width: 100vw;
   height: 100dvh;
   max-height: 100dvh;
   display: grid;
@@ -580,6 +586,7 @@ body {
     radial-gradient(ellipse 70% 50% at var(--light-pos, 50%) 20%, color-mix(in srgb, var(--light-1) 18%, transparent), transparent),
     var(--bg-deep);
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .experience-player::after {
@@ -682,6 +689,7 @@ body {
   position: relative;
   z-index: 8;
   min-height: 0;
+  max-height: 100%;
   overflow: hidden;
 }
 

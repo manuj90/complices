@@ -316,6 +316,8 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
                       className="pareja-window__video"
                       sources={[{ src: scene.video }]}
                       preloadStrategy="metadata"
+                      // ponytail: only autoplay the 2 most recent videos, rest stay paused
+                      active={PAREJA_SCENES.indexOf(scene) >= visibleCount - 2}
                     />
                   ) : (
                     <div className="pareja-window__placeholder">
@@ -378,7 +380,7 @@ function ObeliscoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) 
   return (
     <div className="visuals visuals--obelisco">
       <div className="obelisco-bg-video">
-        <AutoplayVideo sources={[{ src: VIDEOS.obelisco.ciudad }]} />
+        <AutoplayVideo sources={[{ src: VIDEOS.obelisco.ciudad }]} preloadStrategy="auto" />
       </div>
 
       <div className="obelisco-city">
