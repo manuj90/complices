@@ -125,19 +125,69 @@ function MuseoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
   );
 }
 
-const PAREJA_SCENES = [
-  { label: 'Mujer con valija', emoji: '🧳', wall: 1 },
-  { label: 'Hombre en restaurante', emoji: '🍷', wall: 2 },
-  { label: 'Aeropuerto', emoji: '✈️', wall: 3 },
-  { label: 'Perro en parque', emoji: '🐕', wall: 2 },
-  { label: 'Padre e hijo', emoji: '👨‍👦', wall: 2 },
-  { label: 'Bicicletas', emoji: '🚲', wall: 1 },
-  { label: 'Palomas', emoji: '🕊️', wall: 3 },
-  { label: 'Ajedrez', emoji: '♟️', wall: 1 },
-  { label: 'Bailando', emoji: '💃', wall: 2 },
-  { label: 'Auriculares', emoji: '🎧', wall: 3 },
-  { label: 'Bar', emoji: '🍺', wall: 1 },
-  { label: 'Cumpleaños', emoji: '🎂', wall: 2 },
+interface ParejaScene {
+  label: string;
+  wall: number;
+  video?: string;
+  emoji?: string;
+}
+
+const PAREJA_SCENES: ParejaScene [] = [
+  {
+    label: "Mujer Airport",
+    video: "public/media/video/pareja/MujerAirport.mp4",
+    wall: 1,
+  },
+  {
+    label: "Hombre Restaurant",
+    video: "public/media/video/pareja/ComoSolo.mp4",
+    wall: 2,
+  },
+  {
+    label: "Aeropuerto",
+    video: "public/media/video/pareja/CorroAirport.mp4",
+    wall: 3,
+  },
+  {
+    label: "Perro",
+    video: "public/media/video/pareja/PerroSolo.mp4",
+    wall: 2,
+  },
+  {
+    label: "Padre Hijo",
+    video: "public/media/video/pareja/abrazoAirport.mp4",
+    wall: 2,
+  },
+  {
+    label: "Bicicletas",
+    video: "public/media/video/pareja/Bikes.mp4",
+    wall: 1,
+  },
+  {
+    label: "Palomas",
+    video: "public/media/video/pareja/Tie.mp4",
+    wall: 3,
+  },
+  {
+    label: "Ajedrez",
+    video: "public/media/video/pareja/Chess.mp4",
+    wall: 1,
+  },
+  {
+    label: "Bailando",
+    video: "public/media/video/pareja/Bailando.mp4",
+    wall: 1,
+  },
+  {
+    label: "Auriculares",
+    video: "public/media/video/pareja/Walks.mp4",
+    wall: 3,
+  },
+  {
+    label: "Bar",
+    video: "public/media/video/pareja/Earphones.mp4",
+    wall: 1,
+  },
 ];
 
 function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
@@ -158,8 +208,21 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, delay: i * 0.2 }}
                 >
-                  <span className="pareja-window__emoji">{scene.emoji}</span>
-                  <span className="pareja-window__label">{scene.label}</span>
+                  {scene.video ? (
+                    <video
+                      className="pareja-window__video"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    >
+                      <source src={scene.video} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="pareja-window__placeholder">
+                      {scene.label}
+                    </div>
+                  )}
                 </motion.div>
               ))}
           </div>
