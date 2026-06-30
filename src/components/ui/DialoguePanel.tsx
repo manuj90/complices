@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { DialogueLine } from '../../data/types';
 
 interface DialoguePanelProps {
@@ -15,54 +14,59 @@ export function DialoguePanel({
   finalText,
   showFinal = false,
 }: DialoguePanelProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const active = activeRef.current;
-    if (!active) return;
-    active.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, [activeIndex, showFinal]);
+  const activeLine = !showFinal ? lines[activeIndex] : null;
 
   return (
-    <div className="dialogue-panel-wrap">
-      <div className="dialogue-panel" ref={containerRef}>
-        <div className="dialogue-panel__inner">
-          {lines.map((line, i) => {
-            const isActive = !showFinal && i === activeIndex;
-            const isPast = !showFinal && i < activeIndex;
-
-            return (
-              <motion.div
-                key={i}
-                ref={isActive ? activeRef : undefined}
-                className={`dialogue-line dialogue-line--${line.speaker} ${
-                  isActive ? 'active' : isPast ? 'past' : 'upcoming'
-                }`}
-                initial={{ opacity: 0, x: line.speaker === 'A' ? -20 : 20 }}
-                animate={{ opacity: isActive ? 1 : isPast ? 0.55 : 0.25, x: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span className="dialogue-speaker">{line.speaker}</span>
-                <span>{line.text}</span>
-              </motion.div>
-            );
-          })}
-
-          {showFinal && finalText && (
+    <div className="dialogue-split">
+      <div className="dialogue-split__side dialogue-split__side--A">
+        <AnimatePresence mode="wait">
+          {activeLine?.speaker === 'A' && (
             <motion.p
-              ref={activeRef}
-              className="dialogue-final"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
+              key={activeIndex}
+              className="dialogue-split__bubble"
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
-              {finalText}
+              {activeLine.text}
             </motion.p>
           )}
-        </div>
+        </AnimatePresence>
       </div>
-      <div className="dialogue-panel__fade dialogue-panel__fade--top" />
-      <div className="dialogue-panel__fade dialogue-panel__fade--bottom" />
+
+      <div className="dialogue-split__divider" aria-hidden />
+
+      <div className="dialogue-split__side dialogue-split__side--B">
+        <AnimatePresence mode="wait">
+          {activeLine?.speaker === 'B' && (
+            <motion.p
+              key={activeIndex}
+              className="dialogue-split__bubble"
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 12 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {activeLine.text}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {showFinal && finalText && (
+          <motion.p
+            className="dialogue-split__final"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {finalText}
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

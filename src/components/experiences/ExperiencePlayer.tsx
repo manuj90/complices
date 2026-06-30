@@ -9,7 +9,7 @@ import { AudioPlayer } from '../ui/AudioPlayer';
 import { NarrationText } from '../ui/NarrationText';
 import { DrawingCanvas } from '../ui/DrawingCanvas';
 import { DialoguePanel } from '../ui/DialoguePanel';
-import { LoopVideo } from '../ui/LoopVideo';
+import { StepControls } from '../ui/StepControls';
 import { ExperienceVisuals } from './ExperienceVisuals';
 import type { PinId } from '../../data/types';
 
@@ -28,6 +28,7 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [showDrawing, setShowDrawing] = useState(false);
   const [showFinalText, setShowFinalText] = useState(false);
+  const [faroSplitOpen, setFaroSplitOpen] = useState(false);
 
   const media = MEDIA_PATHS[experienceId];
 
@@ -49,6 +50,16 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
   }, []);
 
   useEffect(() => {
+    if (experienceId !== 'faro') {
+      setFaroSplitOpen(false);
+      return;
+    }
+    setFaroSplitOpen(false);
+    const timer = setTimeout(() => setFaroSplitOpen(true), 1600);
+    return () => clearTimeout(timer);
+  }, [experienceId]);
+
+  useEffect(() => {
     if (isDialogue) return;
 
     if (phase >= allTexts.length) {
@@ -58,10 +69,7 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
     }
 
     setCurrentText(allTexts[phase]);
-
-    if (experienceId === 'museo' && phase === 2) {
-      setShowDrawing(true);
-    }
+    setShowDrawing(experienceId === 'museo' && phase >= 2);
 
     const narration = data.narrations[phase - data.intro.length];
     const delay = (narration?.delay ?? 4) * 1000;
@@ -88,6 +96,7 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
       return;
     }
 
+    setShowFinalText(false);
     const line = data.dialogue[dialogueIndex];
     setCurrentText(`${line.speaker}: ${line.text}`);
 
@@ -95,6 +104,68 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
     const timer = setTimeout(() => setDialogueIndex((i) => i + 1), delay);
     return () => clearTimeout(timer);
   }, [dialogueIndex, data, isDialogue, setInLoop]);
+
+  const exitLoop = useCallback(() => {
+    setIsLoop(false);
+    setInLoop(false);
+  }, [setInLoop]);
+
+  const handlePrev = useCallback(() => {
+    exitLoop();
+
+    if (isDialogue && data.dialogue) {
+      if (showFinalText) {
+        setShowFinalText(false);
+        setDialogueIndex(data.dialogue.length - 1);
+        return;
+      }
+      setDialogueIndex((i) => Math.max(0, i - 1));
+      return;
+    }
+
+    setPhase((p) => Math.max(0, p - 1));
+  }, [data.dialogue, exitLoop, isDialogue, showFinalText]);
+
+  const handleNext = useCallback(() => {
+    exitLoop();
+
+    if (isDialogue && data.dialogue) {
+      if (showFinalText) {
+        setIsLoop(true);
+        setInLoop(true);
+        return;
+      }
+
+      if (dialogueIndex >= data.dialogue.length - 1) {
+        if (data.finalText) {
+          setShowFinalText(true);
+        } else {
+          setDialogueIndex(data.dialogue.length);
+        }
+        return;
+      }
+
+      setDialogueIndex((i) => i + 1);
+      return;
+    }
+
+    if (phase >= allTexts.length - 1) {
+      setPhase(allTexts.length);
+      return;
+    }
+
+    setPhase((p) => p + 1);
+  }, [
+    allTexts.length,
+    data.dialogue,
+    data.finalText,
+    dialogueIndex,
+    exitLoop,
+    isDialogue,
+    phase,
+    setInLoop,
+    showFinalText,
+  ]);
 
   const handleRegresar = useCallback(() => {
     gsap.to(containerRef.current, {
@@ -104,18 +175,34 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
     });
   }, [closeExperience]);
 
+  const canPrev = isDialogue
+    ? dialogueIndex > 0 || showFinalText
+    : phase > 0;
+
+  const canNext = isDialogue
+    ? showFinalText || dialogueIndex < data.dialogue!.length
+    : phase < allTexts.length;
+
   const progress = isDialogue
-    ? dialogueIndex / (data.dialogue?.length ?? 1)
-    : phase / allTexts.length;
+    ? showFinalText
+      ? 1
+      : dialogueIndex / (data.dialogue?.length ?? 1)
+    : Math.min(phase / allTexts.length, 1);
+
+  const isFaroSplitOpen = experienceId === 'faro' && (faroSplitOpen || isLoop);
 
   return (
     <motion.div
       ref={containerRef}
-      className={`experience-player experience-player--${experienceId}`}
-      style={{
-        '--light-1': data.lights[0],
-        '--light-2': data.lights[1],
-      } as React.CSSProperties}
+      className={`experience-player experience-player--${experienceId}${
+        isFaroSplitOpen ? ' experience-player--faro-open' : ''
+      }`}
+      style={
+        {
+          '--light-1': data.lights[0],
+          '--light-2': data.lights[1],
+        } as React.CSSProperties
+      }
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -129,6 +216,7 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
         experienceId={experienceId}
         phase={isDialogue ? dialogueIndex : phase}
         isLoop={isLoop}
+        splitOpen={isFaroSplitOpen}
       />
 
       <header className="experience-player__header">
@@ -140,27 +228,23 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
           <h2>{data.title}</h2>
           <span>{data.subtitle}</span>
         </div>
+        {(media.youtubeId || media.audio) && (
+          <div className="experience-player__music-control">
+            <AudioPlayer
+              track={data.music}
+              audioSrc={media.audio}
+              ambientSrc={media.ambient}
+              youtubeId={media.youtubeId}
+            />
+          </div>
+        )}
       </header>
 
-      {media.youtubeId && (
-        <div className="experience-player__music-bar">
-          <AudioPlayer
-            variant="bar"
-            track={data.music}
-            ambient={data.ambientSound}
-            audioSrc={media.audio}
-            ambientSrc={media.ambient}
-            youtubeId={media.youtubeId}
-            youtubeUrl={media.youtubeUrl}
-          />
-        </div>
-      )}
-
-      <LoopVideo src={media.video} visible={isLoop} />
-
       <main
-        className={`experience-player__content ${
-          isDialogue ? 'experience-player__content--dialogue' : ''
+        className={`experience-player__content${
+          isDialogue ? ' experience-player__content--dialogue' : ''
+        }${experienceId === 'cierre' ? ' experience-player__content--cierre' : ''}${
+          experienceId === 'pareja' ? ' experience-player__content--pareja' : ''
         }`}
       >
         {isDialogue && data.dialogue ? (
@@ -171,27 +255,38 @@ export function ExperiencePlayer({ experienceId }: ExperiencePlayerProps) {
             showFinal={showFinalText}
           />
         ) : (
-          <NarrationText text={currentText} size="xl" />
+          <div
+            className={`experience-player__narration-slot${
+              experienceId === 'cierre' ? ' experience-player__narration-slot--cierre' : ''
+            }`}
+          >
+            <NarrationText text={currentText} size="xl" />
+          </div>
         )}
 
         {showDrawing && experienceId === 'museo' && <DrawingCanvas />}
 
         {experienceId === 'cierre' && phase >= 1 && (
-          <motion.div
-            className="cierre-participant"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
+          <div className="cierre-participant">
             <div className="cierre-participant__camera">
               <div className="cierre-participant__feed">
                 <span>Tu silueta, alterada, forma parte de la obra</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
       </main>
 
       <footer className="experience-player__footer">
+        {!isLoop && (
+          <StepControls
+            canPrev={canPrev}
+            canNext={canNext}
+            onPrev={handlePrev}
+            onNext={handleNext}
+          />
+        )}
+
         <div className="experience-player__progress">
           <motion.div
             className="experience-player__progress-bar"

@@ -21,7 +21,7 @@ export const PINS: PinConfig[] = [
     icon: 'lighthouse',
     summary:
       'La inmensidad del océano permite tomar distancia de lo cotidiano y comprender que existimos dentro de sistemas mucho más amplios.',
-    music: 'Vivo — Cerati',
+    music: 'Caifanes',
     lights: [BRAND.teal, BRAND.cream],
   },
   {
@@ -73,7 +73,7 @@ export const PINS: PinConfig[] = [
     icon: 'telescope',
     summary:
       'La experiencia amplía la escala hasta mostrar que nuestra existencia también está conectada con procesos cósmicos que hicieron posible nuestra presencia.',
-    music: 'Dreams For Plans — Shakira',
+    music: 'Dreams For Plans — Shakira (Instrumental)',
     lights: [BRAND.burgundy, BRAND.teal],
   },
   {
@@ -96,7 +96,7 @@ export const EXPERIENCES: Record<string, ExperienceData> = {
     id: 'faro',
     title: 'El Faro',
     subtitle: 'La inmensidad del océano',
-    music: 'Vivo — Gustavo Cerati',
+    music: 'Caifanes',
     ambientSound: 'Tormenta cuadrafónica · Guitarra acústica · Agua',
     lights: [BRAND.teal, BRAND.cream],
     intro: [
@@ -277,12 +277,10 @@ export const EXPERIENCES: Record<string, ExperienceData> = {
     id: 'observatorio',
     title: 'El Observatorio',
     subtitle: 'Mirando el pasado',
-    music: 'Dreams For Plans — Shakira',
+    music: 'Dreams For Plans — Shakira (Instrumental)',
     ambientSound: 'Ambiente del observatorio · Silencio del espacio',
     lights: [BRAND.burgundy, BRAND.teal],
-    intro: [
-      'Para esta parte de la experiencia, por favor ponete los lentes y los auriculares a tu disposición.',
-    ],
+    intro: [],
     narrations: [],
     dialogue: [
       { speaker: 'A', text: '¿Cansado?' },

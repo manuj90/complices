@@ -1,17 +1,20 @@
 import { motion, useMotionValue, useAnimationFrame } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { PinId } from '../../data/types';
+import { VIDEOS } from '../../data/videos';
+import { AutoplayVideo } from '../ui/AutoplayVideo';
 
 interface ExperienceVisualsProps {
   experienceId: PinId;
   phase: number;
   isLoop: boolean;
+  splitOpen?: boolean;
 }
 
-export function ExperienceVisuals({ experienceId, phase, isLoop }: ExperienceVisualsProps) {
+export function ExperienceVisuals({ experienceId, phase, isLoop, splitOpen }: ExperienceVisualsProps) {
   switch (experienceId) {
     case 'faro':
-      return <FaroVisuals phase={phase} isLoop={isLoop} />;
+      return <FaroVisuals phase={phase} isLoop={isLoop} splitOpen={splitOpen ?? false} />;
     case 'museo':
       return <MuseoVisuals phase={phase} isLoop={isLoop} />;
     case 'pareja':
@@ -27,40 +30,79 @@ export function ExperienceVisuals({ experienceId, phase, isLoop }: ExperienceVis
   }
 }
 
-function FaroVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
+function FaroVisuals({
+  phase,
+  isLoop,
+  splitOpen,
+}: {
+  phase: number;
+  isLoop: boolean;
+  splitOpen: boolean;
+}) {
+  const curtainEase = [0.22, 1, 0.36, 1] as const;
+
   return (
-    <div className="visuals visuals--faro">
-
-      <div className="loop-video">
-        <video autoPlay muted loop playsInline>
-          <source src="/media/video/faro/Mar.mp4" type="video/mp4" />
-        </video>
-
-        <div className="" />
+    <div className={`visuals visuals--faro${splitOpen ? ' visuals--faro-open' : ''}`}>
+      <div className="faro-split">
+        <div className="faro-split__video">
+          <AutoplayVideo
+            sources={[{ src: VIDEOS.faro.mar }]}
+            active={splitOpen}
+          />
+          <div className="faro-split__video-overlay" />
+        </div>
+        <div className="faro-split__text-side" />
       </div>
 
       <motion.div
-        className="faro-neon-line"
-        initial={{ scaleY: 0 }}
-        animate={{ scaleY: phase >= 0 ? 1 : 0 }}
-        transition={{ duration: 1.5 }}
+        className="faro-curtain faro-curtain--left"
+        initial={false}
+        animate={{ x: splitOpen ? '-100%' : '0%' }}
+        transition={{ duration: 1.2, ease: curtainEase }}
+      />
+      <motion.div
+        className="faro-curtain faro-curtain--right"
+        initial={false}
+        animate={{ x: splitOpen ? '100%' : '0%' }}
+        transition={{ duration: 1.2, ease: curtainEase }}
       />
 
       <motion.div
-        className="faro-waves"
-        animate={{ y: [0, -20, 0] }}
-        transition={{ repeat: Infinity, duration: 3 }}
-      >
-        {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="faro-wave"
-            style={{ animationDelay: `${i * 0.5}s` }}
-          />
-        ))}
-      </motion.div>
+        className="faro-neon-line"
+        initial={{ scaleY: 0, opacity: 1 }}
+        animate={{
+          scaleY: 1,
+          opacity: splitOpen ? 0 : 1,
+          scaleX: splitOpen ? 1.6 : 1,
+        }}
+        transition={{
+          scaleY: { duration: 1.4, ease: curtainEase },
+          opacity: { duration: 0.35, delay: splitOpen ? 0.15 : 0 },
+          scaleX: { duration: 0.5, delay: splitOpen ? 0.1 : 0 },
+        }}
+      />
 
-      {phase >= 2 && (
+      {splitOpen && (
+        <motion.div
+          className="faro-waves"
+          initial={{ opacity: 0 }}
+          animate={{ y: [0, -20, 0], opacity: 1 }}
+          transition={{
+            opacity: { duration: 0.8, delay: 0.4 },
+            y: { repeat: Infinity, duration: 3 },
+          }}
+        >
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="faro-wave"
+              style={{ animationDelay: `${i * 0.5}s` }}
+            />
+          ))}
+        </motion.div>
+      )}
+
+      {splitOpen && phase >= 2 && (
         <motion.div
           className="faro-boat"
           initial={{ opacity: 0, scale: 0.5 }}
@@ -69,13 +111,12 @@ function FaroVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
         />
       )}
 
-      {isLoop && <FaroFish />}
-
+      {isLoop && splitOpen && <FaroFish />}
     </div>
   );
 }
 
-const FISH_COUNT = 8;
+const FISH_COUNT = 4;
 const FLEE_RADIUS = 140; // px, distancia a la que el pez empieza a huir
 const FLEE_STRENGTH = 60; // px, desplazamiento máximo de huida
 
@@ -102,7 +143,7 @@ function FaroFish() {
       className="faro-fish"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ pointerEvents: 'auto' }}
+
     >
       {[...Array(FISH_COUNT)].map((_, i) => (
         <Fish key={i} index={i} containerRef={containerRef} mouse={mouse} />
@@ -239,61 +280,17 @@ interface ParejaScene {
 }
 
 const PAREJA_SCENES: ParejaScene [] = [
-  {
-    label: "Mujer Airport",
-    video: "/media/video/pareja/MujerAirport.mp4",
-    wall: 1,
-  },
-  {
-    label: "Hombre Restaurant",
-    video: "/media/video/pareja/ComoSolo.mp4",
-    wall: 2,
-  },
-  {
-    label: "Aeropuerto",
-    video: "/media/video/pareja/CorroAirport.mp4",
-    wall: 3,
-  },
-  {
-    label: "Perro",
-    video: "/media/video/pareja/PerroSolo.mp4",
-    wall: 2,
-  },
-  {
-    label: "Padre Hijo",
-    video: "/media/video/pareja/abrazoAirport.mp4",
-    wall: 2,
-  },
-  {
-    label: "Bicicletas",
-    video: "/media/video/pareja/Bikes.mp4",
-    wall: 1,
-  },
-  {
-    label: "Palomas",
-    video: "/media/video/pareja/Tie.mp4",
-    wall: 3,
-  },
-  {
-    label: "Ajedrez",
-    video: "/media/video/pareja/Chess.mp4",
-    wall: 1,
-  },
-  {
-    label: "Bailando",
-    video: "/media/video/pareja/Bailando.mp4",
-    wall: 1,
-  },
-  {
-    label: "Auriculares",
-    video: "/media/video/pareja/Walks.mp4",
-    wall: 3,
-  },
-  {
-    label: "Bar",
-    video: "/media/video/pareja/Earphones.mp4",
-    wall: 1,
-  },
+  { label: 'Mujer Airport', video: VIDEOS.pareja.mujerAirport, wall: 1 },
+  { label: 'Hombre Restaurant', video: VIDEOS.pareja.comoSolo, wall: 2 },
+  { label: 'Aeropuerto', video: VIDEOS.pareja.corroAirport, wall: 3 },
+  { label: 'Perro', video: VIDEOS.pareja.perro, wall: 2 },
+  { label: 'Padre Hijo', video: VIDEOS.pareja.abrazoAirport, wall: 2 },
+  { label: 'Bicicletas', video: VIDEOS.pareja.bikes, wall: 1 },
+  { label: 'Palomas', video: VIDEOS.pareja.tie, wall: 3 },
+  { label: 'Ajedrez', video: VIDEOS.pareja.chess, wall: 1 },
+  { label: 'Bailando', video: VIDEOS.pareja.bailando, wall: 1 },
+  { label: 'Auriculares', video: VIDEOS.pareja.walks, wall: 3 },
+  { label: 'Bar', video: VIDEOS.pareja.earphones, wall: 1 },
 ];
 
 function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
@@ -315,15 +312,11 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
                   transition={{ duration: 0.8, delay: i * 0.2 }}
                 >
                   {scene.video ? (
-                    <video
+                    <AutoplayVideo
                       className="pareja-window__video"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    >
-                      <source src={scene.video} type="video/mp4" />
-                    </video>
+                      sources={[{ src: scene.video }]}
+                      preloadStrategy="metadata"
+                    />
                   ) : (
                     <div className="pareja-window__placeholder">
                       {scene.label}
@@ -351,7 +344,7 @@ function ParejaVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
             />
           ))}
         </svg>
-      )}n
+      )}
       {isLoop && (
         <div className="pareja-buildings-loop">
           {[...Array(3)].map((_, i) => (
@@ -385,9 +378,7 @@ function ObeliscoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) 
   return (
     <div className="visuals visuals--obelisco">
       <div className="obelisco-bg-video">
-        <video autoPlay muted loop playsInline>
-          <source src="/media/video/obelisco/Ciudad.mp4" type="video/mp4" />
-        </video>
+        <AutoplayVideo sources={[{ src: VIDEOS.obelisco.ciudad }]} />
       </div>
 
       <div className="obelisco-city">
@@ -428,13 +419,13 @@ function ObeliscoVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) 
       {isLoop && (
         <div className="obelisco-loop-scenes" ref={sceneAreaRef}>
           <ObeliscoSceneVideo
-            src="/media/video/obelisco/Estadio.mp4"
+            src={VIDEOS.obelisco.estadio}
             label="Estadio lleno"
             delay={0.5}
             dragConstraintsRef={sceneAreaRef}
           />
           <ObeliscoSceneVideo
-            src="/media/video/obelisco/Bar.mp4"
+            src={VIDEOS.obelisco.bar}
             label="Bar activo"
             delay={1.2}
             dragConstraintsRef={sceneAreaRef}
@@ -471,15 +462,25 @@ function ObeliscoSceneVideo({
       whileDrag={{ cursor: 'grabbing', zIndex: 10 }}
       onTap={() => setExpanded((v) => !v)}
     >
-      <video autoPlay muted loop playsInline>
-        <source src={src} type="video/mp4" />
-      </video>
+      <AutoplayVideo sources={[{ src }]} preloadStrategy="metadata" />
       <span className="obelisco-scene-label">{label}</span>
     </motion.div>
   );
 }
 
 function ObservatorioVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
+  const stars = useMemo(
+    () =>
+      [...Array(20)].map((_, i) => ({
+        id: i,
+        left: `${(i * 17 + 11) % 100}%`,
+        top: `${(i * 23 + 7) % 60}%`,
+        duration: 1.2 + (i % 5) * 0.4,
+        delay: (i % 7) * 0.15,
+      })),
+    [],
+  );
+
   return (
     <div className="visuals visuals--observatorio">
       <motion.div
@@ -488,13 +489,17 @@ function ObservatorioVisuals({ phase, isLoop }: { phase: number; isLoop: boolean
         transition={{ duration: 3 }}
       />
       <div className="obs-stars">
-        {[...Array(50)].map((_, i) => (
+        {stars.map((star) => (
           <motion.div
-            key={i}
+            key={star.id}
             className="obs-star"
-            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 60}%` }}
+            style={{ left: star.left, top: star.top }}
             animate={{ opacity: [0.2, 1, 0.2] }}
-            transition={{ repeat: Infinity, duration: 1 + Math.random() * 2, delay: Math.random() }}
+            transition={{
+              repeat: Infinity,
+              duration: star.duration,
+              delay: star.delay,
+            }}
           />
         ))}
       </div>
@@ -502,7 +507,7 @@ function ObservatorioVisuals({ phase, isLoop }: { phase: number; isLoop: boolean
         <motion.div
           className="obs-zoom"
           initial={{ scale: 1 }}
-          animate={{ scale: isLoop ? 3 : 1.5 }}
+          animate={{ scale: isLoop ? 2 : 1.5 }}
           transition={{ duration: 8 }}
         />
       )}
@@ -518,25 +523,39 @@ function ObservatorioVisuals({ phase, isLoop }: { phase: number; isLoop: boolean
 }
 
 function CierreVisuals({ phase, isLoop }: { phase: number; isLoop: boolean }) {
+  const particles = useMemo(
+    () =>
+      [...Array(15)].map((_, i) => ({
+        id: i,
+        left: `${(i * 19 + 5) % 100}%`,
+        top: `${(i * 31 + 12) % 100}%`,
+        hue: 280 + (i % 6) * 10,
+        dx: ((i % 5) - 2) * 30,
+        dy: ((i % 4) - 2) * 25,
+        duration: 3 + (i % 3),
+      })),
+    [],
+  );
+
   return (
     <div className="visuals visuals--cierre">
       <div className="cierre-particles">
-        {[...Array(30)].map((_, i) => (
+        {particles.map((p) => (
           <motion.div
-            key={i}
+            key={p.id}
             className="cierre-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: `hsl(${Math.random() * 60 + 280}, 70%, 60%)`,
+              left: p.left,
+              top: p.top,
+              background: `hsl(${p.hue}, 70%, 60%)`,
             }}
             animate={{
-              x: [0, (Math.random() - 0.5) * 100],
-              y: [0, (Math.random() - 0.5) * 100],
-              scale: [1, 1.5, 1],
+              x: [0, p.dx],
+              y: [0, p.dy],
+              scale: [1, 1.4, 1],
               opacity: [0.3, 0.8, 0.3],
             }}
-            transition={{ repeat: Infinity, duration: 3 + Math.random() * 2 }}
+            transition={{ repeat: Infinity, duration: p.duration }}
           />
         ))}
       </div>

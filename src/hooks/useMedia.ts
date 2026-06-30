@@ -17,6 +17,11 @@ export function useMediaExists(src?: string) {
       return;
     }
 
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      setExists(true);
+      return;
+    }
+
     let cancelled = false;
 
     fetch(src, { method: 'HEAD' })
