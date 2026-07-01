@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { Logo } from '@/components/ui/logo'
+import { Logo } from '@/components/ui/Logo'
 
 export function HomePage() {
   return (

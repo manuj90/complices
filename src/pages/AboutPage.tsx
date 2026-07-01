@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Logo } from '@/components/ui/logo'
+import { Logo } from '@/components/ui/Logo'
 
 export function AboutPage() {
   return (
