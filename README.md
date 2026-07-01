@@ -20,8 +20,15 @@ Abrí `http://localhost:5173`.
 ## Agregar componentes shadcn
 
 ```bash
-npx shadcn@latest add button
+npx shadcn@latest add button card
 ```
+
+## Assets
+
+| Archivo | Uso |
+|---------|-----|
+| `src/assets/logo-blanco.svg` / `logo-nego.svg` | Logo según tema del sistema |
+| `public/caras-blancas.svg` / `caras-negras.svg` | Favicon según tema del sistema |
 
 ## Scripts
 
@@ -29,7 +36,6 @@ npx shadcn@latest add button
 npm run dev      # servidor de desarrollo
 npm run build    # compilación de producción
 npm run preview  # vista previa del build
-npm run lint     # oxlint
 ```
 
 ## Estructura
