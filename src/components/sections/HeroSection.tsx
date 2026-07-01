@@ -1,9 +1,10 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ArrowDown, Sparkles } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaultyTerminal } from '@/components/effects/FaultyTerminal'
+import VariableProximity from '@/components/effects/VariableProximity'
 import { LogoIntro } from '@/components/ui/LogoIntro'
 import { useTheme } from '@/context/ThemeContext'
 
@@ -13,6 +14,7 @@ export function HeroSection() {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const rootRef = useRef<HTMLElement>(null)
+  const headingRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -104,18 +106,22 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 flex flex-col justify-end gap-6 border-t border-border/60 px-6 py-10 md:border-t-0 md:border-l md:px-12 md:py-16 lg:px-16">
-        <div className="space-y-3">
+        <div ref={headingRef} className="space-y-3">
           <span
             data-hero-sub
             className="block text-xs font-semibold tracking-[0.3em] text-primary uppercase"
           >
             {t('hero.eyebrow')}
           </span>
-          <h1
-            data-hero-sub
-            className="font-display max-w-sm text-2xl leading-snug font-medium md:text-3xl"
-          >
-            {t('hero.heading')}
+          <h1 data-hero-sub className="max-w-sm text-2xl leading-snug font-medium md:text-3xl">
+            <VariableProximity
+              label={t('hero.heading')}
+              containerRef={headingRef}
+              fromFontVariationSettings="'wght' 400, 'opsz' 9"
+              toFontVariationSettings="'wght' 800, 'opsz' 40"
+              radius={120}
+              falloff="linear"
+            />
           </h1>
           <p data-hero-sub className="max-w-sm text-sm leading-relaxed text-foreground/70 md:text-base">
             {t('hero.subtitle')}
@@ -126,29 +132,20 @@ export function HeroSection() {
           <a
             data-hero-cta
             href="#portfolio"
-            className="inline-flex items-center justify-center border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+            className="inline-flex items-center justify-center border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:border-foreground hover:bg-foreground hover:text-background"
           >
             {t('hero.ctaPortfolio')}
           </a>
           <a
             data-hero-cta
             href="#experiencia"
-            className="inline-flex items-center justify-center gap-2 border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
+            className="inline-flex items-center justify-center gap-2 border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:border-foreground hover:bg-foreground hover:text-background"
           >
             <Sparkles className="size-3.5" />
             {t('hero.ctaExperience')}
           </a>
         </div>
       </div>
-
-      <a
-        href="#nosotros"
-        aria-label={t('hero.scroll')}
-        className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <span className="text-[10px] tracking-[0.3em] uppercase">{t('hero.scroll')}</span>
-        <ArrowDown className="size-4 animate-bounce" />
-      </a>
     </section>
   )
 }
