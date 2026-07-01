@@ -15,7 +15,7 @@ export function AboutPage() {
 
       <Logo variant="hero" className="mb-6" />
 
-      <p className="font-[family-name:var(--font-display)] text-lg italic text-muted-foreground">
+      <p className="font-display text-lg italic text-muted-foreground">
         Formar parte de algo más grande que vos.
       </p>
     </main>
