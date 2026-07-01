@@ -1,0 +1,74 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "portfolio": "Portfolio",
+    "experience": "Experience"
+  },
+  "hero": {
+    "tagline": "We nailed it. Never opened the manual.",
+    "eyebrow": "What we do",
+    "heading": "Motion, 3D, branding and design, all in the same key.",
+    "subtitle": "No manual: we go by instinct and feeling until it clicks.",
+    "ctaPortfolio": "See the result",
+    "ctaExperience": "Feel the experience",
+    "scroll": "Keep scrolling"
+  },
+  "about": {
+    "title": "About us",
+    "p1": "We skip the manual. We build harmony: motion, 3D, branding and design rowing the same way until it clicks.",
+    "p2": "Less instruction manual, more gut feeling. If it works, it works — the nice explanation comes later."
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "description": "Motion, 3D, branding, design and web. No manuals were harmed.",
+    "drag": "Drag it, no instructions included",
+    "pending": "Doesn't exist yet. Nobody read a manual to rush it.",
+    "pending360": "360° video incoming. Patience isn't in the manual either.",
+    "categories": {
+      "motion": {
+        "label": "Motion Graphics",
+        "description": "Moves on its own, no manual required."
+      },
+      "3d": {
+        "label": "3D Modeling",
+        "description": "Spins until it finds the right angle. By eye."
+      },
+      "branding": {
+        "label": "Branding",
+        "description": "Identity and motion, snapped together with no instructions."
+      },
+      "photoshop": {
+        "label": "Photoshop",
+        "description": "Pure-instinct retouching, zero tutorials."
+      },
+      "illustrator": {
+        "label": "Illustrator",
+        "description": "Vectors that turned out great by accident. Kidding — by skill."
+      },
+      "webs": {
+        "label": "Websites",
+        "description": "Sites we built without reading the docs. Still work."
+      }
+    },
+    "items": {
+      "motion": "Motion Graphic {{n}}",
+      "3d": "3D Model {{n}}",
+      "branding": "Cómplices Branding",
+      "photoshop": "Photoshop {{n}}",
+      "illustrator": "Illustrator {{n}}",
+      "web": "Website {{n}}"
+    }
+  },
+  "experience": {
+    "title": "The experience",
+    "description": "A journey to feel that harmony of landing the result with no detours and no instructions.",
+    "cta": "Come in and feel the harmony"
+  },
+  "loader": {
+    "loading": "Building it, no manual"
+  },
+  "footer": {
+    "rights": "All rights reserved. The manual isn't."
+  }
+}
