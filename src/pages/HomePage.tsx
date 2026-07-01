@@ -17,7 +17,7 @@ export function HomePage() {
       <CursorGlow />
       <GrainOverlay />
       <Header />
-      <main className="relative">
+      <main className="relative min-w-0 overflow-x-clip">
         <HeroSection />
         <NosotrosSection />
         <PortfolioSection />

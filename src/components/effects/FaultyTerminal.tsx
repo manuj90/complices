@@ -17,7 +17,13 @@ export interface FaultyTerminalProps extends React.HTMLAttributes<HTMLDivElement
   dither?: number | boolean
   curvature?: number
   tint?: string
+  /** Color base de los cuadrados/dígitos activos (antes de aplicar tint) */
+  squareColor?: string
+  /** Color del brillo/borde alrededor de cada cuadrado */
+  squareGlowColor?: string
   backgroundColor?: string
+  /** Rango [min, max] del smoothstep que mezcla cuadrados con el fondo (más alto = menos intrusivo) */
+  maskRange?: Vec2
   mouseReact?: boolean
   mouseStrength?: number
   dpr?: number
@@ -54,7 +60,10 @@ uniform float uChromaticAberration;
 uniform float uDither;
 uniform float uCurvature;
 uniform vec3  uTint;
+uniform vec3  uSquareColor;
+uniform vec3  uSquareGlowColor;
 uniform vec3  uBackgroundColor;
+uniform vec2  uMaskRange;
 uniform vec2  uMouse;
 uniform float uMouseStrength;
 uniform float uUseMouse;
@@ -192,7 +201,7 @@ vec3 getColor(vec2 p){
                 digit(p + vec2(-off, 0.0)) + digit(p + vec2(0.0, 0.0)) + digit(p + vec2(off, 0.0)) +
                 digit(p + vec2(-off, off)) + digit(p + vec2(0.0, off)) + digit(p + vec2(off, off));
 
-    vec3 baseColor = vec3(0.9) * middle + sum * 0.1 * vec3(1.0) * bar;
+    vec3 baseColor = uSquareColor * middle + sum * 0.1 * uSquareGlowColor * bar;
     return baseColor;
 }
 
@@ -222,7 +231,7 @@ void main() {
 
     vec3 digitColor = col * uTint * uBrightness;
     float intensity = max(col.r, max(col.g, col.b));
-    float mask = smoothstep(0.12, 0.55, intensity);
+    float mask = smoothstep(uMaskRange.x, uMaskRange.y, intensity);
     col = mix(uBackgroundColor, digitColor, mask);
 
     if(uDither > 0.0){
@@ -255,11 +264,14 @@ export function FaultyTerminal({
   glitchAmount = 1,
   flickerAmount = 1,
   noiseAmp = 1,
-  chromaticAberration = 0,
+  chromaticAberration = 1,
   dither = 0,
   curvature = 0.2,
   tint = '#ffffff',
+  squareColor = '#e6e6e6',
+  squareGlowColor = '#ffffff',
   backgroundColor = '#000000',
+  maskRange = [0.12, 0.55],
   mouseReact = true,
   mouseStrength = 0.2,
   dpr = Math.min(window.devicePixelRatio || 1, 2),
@@ -278,6 +290,8 @@ export function FaultyTerminal({
   const timeOffsetRef = useRef<number>(Math.random() * 100)
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint])
+  const squareColorVec = useMemo(() => hexToRgb(squareColor), [squareColor])
+  const squareGlowColorVec = useMemo(() => hexToRgb(squareGlowColor), [squareGlowColor])
   const backgroundVec = useMemo(() => hexToRgb(backgroundColor), [backgroundColor])
   const ditherValue = useMemo(() => (typeof dither === 'boolean' ? (dither ? 1 : 0) : dither), [dither])
 
@@ -319,7 +333,12 @@ export function FaultyTerminal({
         uDither: { value: ditherValue },
         uCurvature: { value: curvature },
         uTint: { value: new Color(tintVec[0], tintVec[1], tintVec[2]) },
+        uSquareColor: { value: new Color(squareColorVec[0], squareColorVec[1], squareColorVec[2]) },
+        uSquareGlowColor: {
+          value: new Color(squareGlowColorVec[0], squareGlowColorVec[1], squareGlowColorVec[2]),
+        },
         uBackgroundColor: { value: new Color(backgroundVec[0], backgroundVec[1], backgroundVec[2]) },
+        uMaskRange: { value: new Float32Array(maskRange) },
         uMouse: {
           value: new Float32Array([smoothMouseRef.current.x, smoothMouseRef.current.y]),
         },
@@ -412,7 +431,10 @@ export function FaultyTerminal({
     ditherValue,
     curvature,
     tintVec,
+    squareColorVec,
+    squareGlowColorVec,
     backgroundVec,
+    maskRange,
     mouseReact,
     mouseStrength,
     pageLoadAnimation,

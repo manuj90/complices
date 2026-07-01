@@ -6,8 +6,8 @@ import nameBlanco from '@/assets/name-blanco.svg'
 import nameNegro from '@/assets/name-negro.svg'
 import { cn } from '@/lib/utils'
 
-/** mr negativo = 34% del alto de la cara (h-24 / md:h-32), overlap medido sobre el logo combinado original. */
-const FACE_OVERLAP_CLASS = '-mr-8 md:-mr-11'
+/** mr negativo ≈ 34% del alto de la cara; recalibrar si cambian los breakpoints de altura. */
+const FACE_OVERLAP_CLASS = '-mr-8 sm:-mr-9 md:-mr-10 lg:-mr-12'
 
 export function LogoIntro({ className }: { className?: string }) {
   return (
@@ -18,28 +18,28 @@ export function LogoIntro({ className }: { className?: string }) {
           src={caraIzqNegro}
           alt=""
           draggable={false}
-          className={cn('relative z-10 block h-24 w-auto dark:hidden md:h-32', FACE_OVERLAP_CLASS)}
+          className={cn('relative z-10 block h-24 w-auto dark:hidden sm:h-28 md:h-32 lg:h-36 xl:h-40', FACE_OVERLAP_CLASS)}
         />
         <img
           data-face="left"
           src={caraIzqBlanco}
           alt=""
           draggable={false}
-          className={cn('relative z-10 hidden h-24 w-auto dark:block md:h-32', FACE_OVERLAP_CLASS)}
+          className={cn('relative z-10 hidden h-24 w-auto dark:block sm:h-28 md:h-32 lg:h-36 xl:h-40', FACE_OVERLAP_CLASS)}
         />
         <img
           data-face="right"
           src={caraDerNegro}
           alt="Cómplices"
           draggable={false}
-          className="relative z-0 block h-24 w-auto dark:hidden md:h-32"
+          className="relative z-0 block h-24 w-auto dark:hidden sm:h-28 md:h-32 lg:h-36 xl:h-40"
         />
         <img
           data-face="right"
           src={caraDerBlanco}
           alt="Cómplices"
           draggable={false}
-          className="relative z-0 hidden h-24 w-auto dark:block md:h-32"
+          className="relative z-0 hidden h-24 w-auto dark:block sm:h-28 md:h-32 lg:h-36 xl:h-40"
         />
       </div>
 
@@ -48,14 +48,14 @@ export function LogoIntro({ className }: { className?: string }) {
         src={nameNegro}
         alt=""
         draggable={false}
-        className="mt-4 h-auto w-[min(70vw,300px)] dark:hidden"
+        className="mt-4 h-auto w-[min(88vw,320px)] sm:mt-5 sm:w-[min(78vw,360px)] lg:w-[min(72vw,380px)] dark:hidden"
       />
       <img
         data-logo-name
         src={nameBlanco}
         alt=""
         draggable={false}
-        className="mt-4 hidden h-auto w-[min(70vw,300px)] dark:block"
+        className="mt-4 hidden h-auto w-[min(88vw,320px)] sm:mt-5 sm:w-[min(78vw,360px)] lg:w-[min(72vw,380px)] dark:block"
       />
     </div>
   )

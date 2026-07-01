@@ -1,74 +1,74 @@
 {
-  "nav": {
-    "home": "Inicio",
-    "about": "Nosotros",
-    "portfolio": "Portfolio",
-    "experience": "Experiencia"
-  },
-  "hero": {
-    "tagline": "Llegamos al resultado sin leer el manual.",
-    "eyebrow": "Qué hacemos",
-    "heading": "Motion, 3D, branding y diseño, todo en una misma sintonía.",
-    "subtitle": "Sin instructivo: vamos a instinto y feeling hasta que cierra.",
-    "ctaPortfolio": "Mirá el resultado",
-    "ctaExperience": "Sentí la experiencia",
-    "scroll": "Seguí bajando"
-  },
-  "about": {
-    "title": "Nosotros",
-    "p1": "No leemos manuales. Armamos armonía: motion, 3D, branding y diseño remando para el mismo lado hasta que cierra.",
-    "p2": "Menos instructivo, más olfato. Si funciona, funciona — la explicación bonita viene después."
-  },
-  "portfolio": {
-    "title": "Portfolio",
-    "description": "Motion, 3D, branding, diseño y web. Ningún manual fue consultado.",
-    "drag": "Arrastrá, esto no viene con instrucciones",
-    "pending": "Todavía no existe. Nadie leyó el manual para apurarlo.",
-    "pending360": "Video 360° en camino. La paciencia tampoco viene con instructivo.",
-    "categories": {
-      "motion": {
-        "label": "Motion Graphics",
-        "description": "Se mueve solo, no necesitó manual."
-      },
-      "3d": {
-        "label": "Modelado 3D",
-        "description": "Da vueltas hasta encontrar el ángulo correcto. A ojo."
-      },
-      "branding": {
-        "label": "Branding",
-        "description": "Identidad y motion, encastrados sin instructivo."
-      },
-      "photoshop": {
-        "label": "Photoshop",
-        "description": "Retoque a pura intuición, cero tutorial."
-      },
-      "illustrator": {
-        "label": "Illustrator",
-        "description": "Vectores que salieron bien de casualidad. Mentira, de oficio."
-      },
-      "webs": {
-        "label": "Webs",
-        "description": "Sitios que armamos sin leer la documentación. Andan igual."
-      }
-    },
-    "items": {
-      "motion": "Motion Graphic {{n}}",
-      "3d": "Modelado 3D {{n}}",
-      "branding": "Branding Cómplices",
-      "photoshop": "Photoshop {{n}}",
-      "illustrator": "Illustrator {{n}}",
-      "web": "Web {{n}}"
-    }
-  },
-  "experience": {
-    "title": "La experiencia",
-    "description": "Un recorrido para sentir esa armonía de llegar al resultado sin vueltas ni instructivo.",
-    "cta": "Entrá y sentí la armonía"
-  },
-  "loader": {
-    "loading": "Armando, sin manual"
-  },
-  "footer": {
-    "rights": "Todos los derechos reservados. El instructivo, no."
-  }
+	"nav": {
+		"home": "Inicio",
+		"about": "Nosotros",
+		"portfolio": "Portfolio",
+		"experience": "Experiencia"
+	},
+	"hero": {
+		"tagline": "Llegamos al resultado sin leer el manual.",
+		"eyebrow": "Qué hacemos",
+		"heading": "Motion, 3D, branding y diseño, todo en una misma sintonía.",
+		"subtitle": "Sin instructivo: vamos a instinto y feeling hasta que cierra.",
+		"ctaPortfolio": "Mirá el resultado",
+		"ctaExperience": "Sentí la experiencia",
+		"scroll": "Seguí bajando"
+	},
+	"about": {
+		"title": "Nosotros",
+		"p1": "No leemos manuales. Armamos armonía: motion, 3D, branding y diseño remando para el mismo lado hasta que cierra.",
+		"p2": "Menos instructivo, más olfato. Si funciona, funciona — la explicación bonita viene después."
+	},
+	"portfolio": {
+		"title": "Portfolio",
+		"description": "Motion, 3D, branding, diseño y web. Ningún manual fue consultado.",
+		"drag": "Arrastrá, esto no viene con instrucciones",
+		"pending": "Todavía no existe. Nadie leyó el manual para apurarlo.",
+		"pending360": "Video 360° en camino. La paciencia tampoco viene con instructivo.",
+		"categories": {
+			"motion": {
+				"label": "Motion Graphics",
+				"description": "Se mueve solo, no necesitó manual."
+			},
+			"3d": {
+				"label": "Modelado 3D",
+				"description": "Da vueltas hasta encontrar el ángulo correcto. A ojo."
+			},
+			"branding": {
+				"label": "Branding",
+				"description": "Identidad y motion, encastrados sin instructivo."
+			},
+			"photoshop": {
+				"label": "Photoshop",
+				"description": "Retoque a pura intuición, cero tutorial."
+			},
+			"illustrator": {
+				"label": "Illustrator",
+				"description": "Vectores que salieron bien de casualidad. Mentira, de oficio."
+			},
+			"webs": {
+				"label": "Webs",
+				"description": "Sitios que armamos sin leer la documentación. Andan igual."
+			}
+		},
+		"items": {
+			"motion": "Motion Graphic {{n}}",
+			"3d": "Modelado 3D {{n}}",
+			"branding": "Branding Cómplices",
+			"photoshop": "Photoshop {{n}}",
+			"illustrator": "Illustrator {{n}}",
+			"web": "Web {{n}}"
+		}
+	},
+	"experience": {
+		"title": "La experiencia",
+		"description": "Un recorrido para sentir esa armonía de llegar al resultado sin vueltas ni instructivo.",
+		"cta": "Entrá y sentí la armonía"
+	},
+	"loader": {
+		"loading": "Cargando... rezando para que no explote"
+	},
+	"footer": {
+		"rights": "Todos los derechos reservados. El instructivo, no."
+	}
 }
