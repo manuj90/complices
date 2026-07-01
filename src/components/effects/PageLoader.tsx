@@ -35,7 +35,7 @@ export function PageLoader() {
             <Logo variant="intro" />
           </motion.div>
           <motion.p
-            className="mt-8 text-xs tracking-[0.35em] text-muted-foreground uppercase"
+            className="mt-8 w-full max-w-md px-6 text-center text-xs tracking-[0.35em] text-muted-foreground uppercase"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
