@@ -56,12 +56,12 @@ export function PortfolioGrid({ category }: PortfolioGridProps) {
       </div>
 
       <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-background to-transparent" />
 
         <div
           ref={trackRef}
-          className="portfolio-track scrollbar-hide -mx-6 flex gap-5 px-6 pb-2 md:-mx-0 md:px-0"
+          className="portfolio-track scrollbar-hide -mx-6 flex gap-5 px-6 pb-2 md:mx-0 md:px-0"
         >
           {category.items.map((item, index) => {
             const title = getItemTitle(t, item)

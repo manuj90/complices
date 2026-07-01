@@ -132,14 +132,14 @@ export function HeroSection() {
           <a
             data-hero-cta
             href="#portfolio"
-            className="inline-flex items-center justify-center border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:border-foreground hover:bg-foreground hover:text-background"
+            className="liquid-glass inline-flex items-center justify-center px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:bg-foreground hover:text-background"
           >
             {t('hero.ctaPortfolio')}
           </a>
           <a
             data-hero-cta
             href="#experiencia"
-            className="inline-flex items-center justify-center gap-2 border border-border px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:border-foreground hover:bg-foreground hover:text-background"
+            className="liquid-glass inline-flex items-center justify-center gap-2 px-6 py-3 text-xs font-semibold tracking-[0.2em] text-foreground uppercase transition-colors duration-500 ease-out hover:bg-foreground hover:text-background"
           >
             <Sparkles className="size-3.5" />
             {t('hero.ctaExperience')}

@@ -12,7 +12,7 @@ export function ExperienciaSection() {
   return (
     <section id="experiencia" ref={ref} className="relative scroll-mt-28 px-6 py-28 md:py-36">
       <div className="relative z-10 mx-auto max-w-6xl">
-        <Panel data-reveal className="relative overflow-hidden rounded-[2rem] p-8 md:p-14">
+        <Panel data-reveal className="relative overflow-hidden rounded-4xl p-8 md:p-14">
           <div className="pointer-events-none absolute -top-24 -right-24 size-72 rounded-full bg-primary/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-20 -left-16 size-56 rounded-full bg-secondary/25 blur-3xl" />
 

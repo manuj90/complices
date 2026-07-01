@@ -19,7 +19,7 @@ export function CursorGlow() {
 
   return (
     <motion.div
-      className="pointer-events-none fixed inset-0 z-[1] hidden md:block"
+      className="pointer-events-none fixed inset-0 z-1 hidden md:block"
       style={{ background }}
       aria-hidden
     />

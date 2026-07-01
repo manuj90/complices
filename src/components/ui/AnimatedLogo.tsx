@@ -72,7 +72,7 @@ export function AnimatedLogo({ className }: { className?: string }) {
     <div
       ref={rootRef}
       className={cn(
-        'relative flex w-[190px] items-center justify-center overflow-hidden md:w-[230px] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
+        'relative flex w-47.5 items-center justify-center overflow-hidden md:w-57.5 mask-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
         className,
       )}
     >

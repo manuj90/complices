@@ -9,6 +9,9 @@ import {
 } from 'react'
 import { motion } from 'motion/react'
 
+// ponytail: empirical offset for a 400->800 wght swing in Rubik; retune if fromFontVariationSettings/toFontVariationSettings change.
+const LETTER_SPACING_COMPENSATION_EM = 0.045
+
 function useAnimationFrame(callback: () => void) {
   useEffect(() => {
     let frameId: number
@@ -145,6 +148,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
 
       if (distance >= radius) {
         letterRef.style.fontVariationSettings = fromFontVariationSettings
+        letterRef.style.letterSpacing = '0em'
         return
       }
 
@@ -158,6 +162,9 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
 
       interpolatedSettingsRef.current[index] = newSettings
       letterRef.style.fontVariationSettings = newSettings
+      // Heavier weight widens each glyph's advance width, which shifts word-wrap points
+      // mid-hover. Compensate with negative tracking so the line's total width stays put.
+      letterRef.style.letterSpacing = `${-LETTER_SPACING_COMPENSATION_EM * falloffValue}em`
     })
   })
 
@@ -170,7 +177,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
       onClick={onClick}
       style={{
         display: 'inline',
-        fontFamily: '"Roboto Flex", sans-serif',
+        fontFamily: '"Rubik", sans-serif',
         ...style,
       }}
       className={className}
