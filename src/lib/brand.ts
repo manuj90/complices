@@ -6,6 +6,6 @@ export const BRAND = {
   gray: '#6D6D6D',
   dark: '#232323',
   cream: '#F1E8E8',
-} as const;
+} as const
 
-export type BrandColor = (typeof BRAND)[keyof typeof BRAND];
+export type BrandColor = (typeof BRAND)[keyof typeof BRAND]

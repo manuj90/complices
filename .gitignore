@@ -23,7 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# Videos servidos desde Vercel Blob (ver src/data/videos.ts)
-public/media/video/**
-!public/media/video/.gitkeep
 terminals/
