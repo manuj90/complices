@@ -1,19 +1,21 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Sparkles } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BlurText } from '@/components/effects/BlurText'
-import { FaultyTerminal } from '@/components/effects/FaultyTerminal'
+import ElectricBorder from '@/components/effects/ElectricBorder'
+import FloatingLines from '@/components/effects/FloatingLines'
 import VariableProximity from '@/components/effects/VariableProximity'
 import { LogoIntro } from '@/components/ui/LogoIntro'
-import { useTheme } from '@/context/ThemeContext'
+import { heroEffects } from '@/lib/brand-theme'
 
 gsap.registerPlugin(ScrollTrigger)
 
 export function HeroSection() {
   const { t } = useTranslation()
-  const { theme } = useTheme()
+  const [electricBorderActive, setElectricBorderActive] = useState(false)
+  const electricEntranceDoneRef = useRef(false)
   const rootRef = useRef<HTMLElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
 
@@ -35,6 +37,10 @@ export function HeroSection() {
           { opacity: 0, y: 16, stagger: 0.12, duration: 0.7, ease: 'power3.out' },
           '-=0.45',
         )
+        .call(() => {
+          electricEntranceDoneRef.current = true
+          setElectricBorderActive(true)
+        })
         .add(() => {
           // Recién acá, con la entrada ya asentada, armamos el scroll-parallax:
           // si se crea en paralelo, pisa las mismas props (xPercent/rotate) y corta la entrada.
@@ -61,6 +67,16 @@ export function HeroSection() {
               scrub: true,
             },
           })
+
+          ScrollTrigger.create({
+            trigger: rootRef.current,
+            start: 'top top',
+            end: '60% top',
+            onUpdate: (self) => {
+              if (!electricEntranceDoneRef.current) return
+              setElectricBorderActive(self.progress <= 0)
+            },
+          })
         })
     }, rootRef)
     return () => ctx.revert()
@@ -70,30 +86,22 @@ export function HeroSection() {
     <section
       id="hero"
       ref={rootRef}
-      className="relative grid min-h-[100dvh] grid-cols-1 overflow-hidden pt-16 md:grid-cols-2 lg:min-h-screen lg:pt-20"
+      className="relative grid min-h-dvh grid-cols-1 overflow-hidden pt-16 md:grid-cols-2 lg:min-h-screen lg:pt-20"
     >
       <div
-        className={`absolute inset-0 z-0 ${theme === 'dark' ? 'opacity-40' : 'opacity-[0.22]'}`}
+        className="absolute inset-0 z-0"
+        style={{ opacity: heroEffects.floatingLinesOpacity }}
       >
-        <FaultyTerminal
-          scale={1.2}
-          gridMul={[2, 1]}
-          digitSize={2.3}
-          timeScale={0.7}
-          scanlineIntensity={theme === 'dark' ? 1 : 0.4}
-          glitchAmount={1}
-          flickerAmount={theme === 'dark' ? 1 : 0.35}
-          noiseAmp={theme === 'dark' ? 1 : 0.75}
-          curvature={0.1}
-          tint={theme === 'dark' ? '#ea5021' : '#c9907a'}
-          squareColor={theme === 'dark' ? '#e6e6e6' : '#f0e4e0'}
-          squareGlowColor={theme === 'dark' ? '#ffffff' : '#f7efef'}
-          backgroundColor={theme === 'dark' ? '#141414' : '#f4ecec'}
-          maskRange={theme === 'dark' ? [0.12, 0.55] : [0.36, 0.82]}
-          mouseReact
-          mouseStrength={theme === 'dark' ? 0.9 : 0.5}
-          pageLoadAnimation
-          brightness={theme === 'dark' ? 0.6 : 0.28}
+        <FloatingLines
+          linesGradient={[...heroEffects.floatingLines]}
+          enabledWaves={['bottom', 'middle', 'top']}
+          lineCount={13}
+          lineDistance={95.5}
+          bendRadius={11.5}
+          bendStrength={-11.5}
+          interactive
+          parallax
+          animationSpeed={1.1}
         />
       </div>
 
@@ -153,18 +161,28 @@ export function HeroSection() {
           <a
             data-hero-cta
             href="#portfolio"
-            className="liquid-glass inline-flex w-full items-center justify-center px-5 py-3 text-[0.65rem] font-semibold tracking-[0.16em] text-foreground uppercase transition-[color,background-color,box-shadow] duration-500 ease-out hover:bg-foreground hover:text-background hover:shadow-none sm:w-auto sm:px-6 sm:text-xs sm:tracking-[0.2em] dark:hover:bg-foreground dark:hover:text-background"
+            className="liquid-glass liquid-glass-brand inline-flex w-full items-center justify-center px-5 py-3 text-[0.65rem] font-semibold tracking-[0.16em] text-foreground uppercase transition-[color,background-color,box-shadow] duration-500 ease-out hover:bg-foreground hover:text-background hover:shadow-none sm:w-auto sm:px-6 sm:text-xs sm:tracking-[0.2em]"
           >
             {t('hero.ctaPortfolio')}
           </a>
-          <a
-            data-hero-cta
-            href="#experiencia"
-            className="liquid-glass inline-flex w-full items-center justify-center gap-2 px-5 py-3 text-[0.65rem] font-semibold tracking-[0.16em] text-foreground uppercase transition-[color,background-color,box-shadow] duration-500 ease-out hover:bg-foreground hover:text-background hover:shadow-none sm:w-auto sm:px-6 sm:text-xs sm:tracking-[0.2em] dark:hover:bg-foreground dark:hover:text-background"
-          >
-            <Sparkles className="size-3.5" />
-            {t('hero.ctaExperience')}
-          </a>
+          <div data-hero-cta className="w-full sm:w-auto">
+            <ElectricBorder
+              active={electricBorderActive}
+              color={heroEffects.electricBorder}
+              speed={0.4}
+              chaos={heroEffects.electricChaos}
+              borderRadius={16}
+              className="w-full sm:w-auto"
+            >
+              <a
+                href="#experiencia"
+                className="liquid-glass liquid-glass-accent inline-flex w-full items-center justify-center gap-2 px-5 py-3 text-[0.65rem] font-semibold tracking-[0.16em] text-foreground uppercase transition-[color,background-color,box-shadow] duration-500 ease-out hover:bg-foreground hover:text-background hover:shadow-none sm:w-auto sm:px-6 sm:text-xs sm:tracking-[0.2em]"
+              >
+                <Sparkles className="size-3.5" />
+                {t('hero.ctaExperience')}
+              </a>
+            </ElectricBorder>
+          </div>
         </div>
       </div>
     </section>

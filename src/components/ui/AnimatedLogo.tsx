@@ -1,11 +1,8 @@
 import gsap from 'gsap'
 import { useEffect, useRef } from 'react'
 import caraDerBlanco from '@/assets/cara-der-blanca.svg'
-import caraDerNegro from '@/assets/cara-der-negra.svg'
 import caraIzqBlanco from '@/assets/cara-izq-blanca.svg'
-import caraIzqNegro from '@/assets/cara-izq-negra.svg'
 import nameBlanco from '@/assets/name-blanco.svg'
-import nameNegro from '@/assets/name-negro.svg'
 import { cn } from '@/lib/utils'
 
 /** mr negativo = overlap de las caras en su posición final (mismo criterio que LogoIntro). */
@@ -27,7 +24,6 @@ export function AnimatedLogo({ className }: { className?: string }) {
         .set('[data-alogo-face="right"]', { xPercent: 0, opacity: 0 })
         .set('[data-alogo-name]', { opacity: 0, scale: 0.85 })
 
-        // Frame 1: cara izquierda entra y se va
         .fromTo(
           '[data-alogo-face="left"]',
           { xPercent: -260, opacity: 0 },
@@ -35,7 +31,6 @@ export function AnimatedLogo({ className }: { className?: string }) {
         )
         .to('[data-alogo-face="left"]', { xPercent: -260, opacity: 0, duration: 0.65 }, '+=0.35')
 
-        // Frame 2: cara derecha entra y se va
         .fromTo(
           '[data-alogo-face="right"]',
           { xPercent: 260, opacity: 0 },
@@ -43,7 +38,6 @@ export function AnimatedLogo({ className }: { className?: string }) {
         )
         .to('[data-alogo-face="right"]', { xPercent: 260, opacity: 0, duration: 0.65 }, '+=0.35')
 
-        // Frame 3: se juntan, una entra por la izquierda y la otra por la derecha
         .fromTo(
           '[data-alogo-face="left"]',
           { xPercent: -260, opacity: 0 },
@@ -56,7 +50,6 @@ export function AnimatedLogo({ className }: { className?: string }) {
           '<',
         )
 
-        // Frame 4: giran juntas y aparece el nombre
         .to('[data-alogo-faces]', { rotate: 360, duration: 1.1, ease: 'power2.inOut' })
         .to(
           '[data-alogo-name]',
@@ -80,47 +73,26 @@ export function AnimatedLogo({ className }: { className?: string }) {
         <div data-alogo-faces className="relative flex shrink-0 items-center">
           <img
             data-alogo-face="left"
-            src={caraIzqNegro}
-            alt=""
-            draggable={false}
-            className={cn('h-7 w-auto dark:hidden md:h-9', FACE_OVERLAP_CLASS)}
-          />
-          <img
-            data-alogo-face="left"
             src={caraIzqBlanco}
             alt=""
             draggable={false}
-            className={cn('hidden h-7 w-auto dark:block md:h-9', FACE_OVERLAP_CLASS)}
-          />
-          <img
-            data-alogo-face="right"
-            src={caraDerNegro}
-            alt="Cómplices"
-            draggable={false}
-            className="h-7 w-auto dark:hidden md:h-9"
+            className={cn('h-7 w-auto md:h-9', FACE_OVERLAP_CLASS)}
           />
           <img
             data-alogo-face="right"
             src={caraDerBlanco}
             alt="Cómplices"
             draggable={false}
-            className="hidden h-7 w-auto dark:block md:h-9"
+            className="h-7 w-auto md:h-9"
           />
         </div>
 
         <img
           data-alogo-name
-          src={nameNegro}
-          alt=""
-          draggable={false}
-          className="ml-2 h-4 w-auto shrink-0 dark:hidden md:h-5"
-        />
-        <img
-          data-alogo-name
           src={nameBlanco}
           alt=""
           draggable={false}
-          className="ml-2 hidden h-4 w-auto shrink-0 dark:block md:h-5"
+          className="ml-2 h-4 w-auto shrink-0 md:h-5"
         />
       </div>
     </div>
